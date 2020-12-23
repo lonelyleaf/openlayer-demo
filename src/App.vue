@@ -12,7 +12,7 @@ import Map from 'ol/Map';
 import View from 'ol/View';
 import TileLayer from 'ol/layer/Tile';
 import XYZ from 'ol/source/XYZ';
-import {sampleJson, zunyiRoads} from '@/data/geojson'
+import {gpsPoints, geojsonObject} from '@/data/geojson'
 import {OSM, Vector as VectorSource} from 'ol/source';
 import GeoJSON from 'ol/format/GeoJSON';
 import VectorLayer from "ol/layer/Vector";
@@ -32,57 +32,40 @@ export default {
   methods: {
     initMap() {
 
-      // let geojsonObject = {
-      //   'type': 'FeatureCollection',
-      //   "crs": {
-      //     "type": "name",
-      //     "properties": {
-      //       "name": "EPSG:4326"
-      //     }
-      //   },
-      //   'features': [{
-      //     'type': 'Feature',
-      //     'geometry': zunyiRoads
-      //   }]
-      // }
-      let geojsonObject = sampleJson
+      let gpsPointLayer = new VectorLayer({
+        source: new VectorSource({
+          url: 'data/geojson_f.json',
+          format: new GeoJSON(),
+        }),
+      })
 
-      let polygonStyleFunction = function polygonStyleFunction(feature, resolution) {
-        return new Style({
-          stroke: new Stroke({
-            color: 'blue',
-            width: 1,
-          }),
-          fill: new Fill({
-            color: 'rgba(0, 0, 255, 0.1)',
-          }),
-          // text: createTextStyle(feature, resolution, myDom.polygons),
-        });
-      }
+      let roadsLayer = new VectorLayer({
+        source: new VectorSource({
+          url: 'data/geojson_roads.json',
+          format: new GeoJSON(),
+        }),
+      })
 
       let map = new Map({
-            target: 'map',
-            layers: [
-              // new TileLayer({
-              //   source: new XYZ({
-              //     url: 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-              //   })
-              // }),
-              new TileLayer({
-                source: new OSM(),
-              }),
-              new VectorLayer({
-                source: new VectorSource({
-                  features: new GeoJSON().readFeatures(geojsonObject),
-                }),
-                style: polygonStyleFunction,
-              })
-            ],
-            view: new View({
-              center: [0, 0],
-              zoom: 2
-            })
-          })
+        target: 'map',
+        layers: [
+          // new TileLayer({
+          //   source: new XYZ({
+          //     url: 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+          //   })
+          // }),
+          new TileLayer({
+            source: new OSM(),
+          }),
+          gpsPointLayer,
+          roadsLayer
+        ],
+        view: new View({
+          projection: 'EPSG:4326',
+          center: [0, 0],
+          zoom: 2
+        })
+      })
       return map;
     },
   }
