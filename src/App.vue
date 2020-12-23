@@ -20,6 +20,7 @@ import {styleFunction} from './olUtil'
 import Stroke from "ol/style/Stroke";
 import Style from "ol/style/Style";
 import {Fill} from "ol/style";
+import WebGLPointsLayer from "ol/layer/WebGLPoints";
 
 export default {
   name: 'App',
@@ -32,12 +33,26 @@ export default {
   methods: {
     initMap() {
 
-      let gpsPointLayer = new VectorLayer({
+      // let gpsPointLayer = new VectorLayer({
+      //   source: new VectorSource({
+      //     url: 'data/geojson_f.json',
+      //     format: new GeoJSON(),
+      //   }),
+      // })
+      let gpsPointLayer = new WebGLPointsLayer({
         source: new VectorSource({
           url: 'data/geojson_f.json',
           format: new GeoJSON(),
         }),
+        style: {
+          symbol: {
+            symbolType: 'circle',
+            size: 5,
+            color: 'rgba(255,0,0,0.5)'
+          }
+        }
       })
+
 
       let roadsLayer = new VectorLayer({
         source: new VectorSource({
